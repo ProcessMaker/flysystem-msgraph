@@ -19,3 +19,4 @@ define("APP_PASSWORD", getenv("test_app_password"));
 define("OAUTH_AUTHORITY", getenv("test_oauth_authority") ? getenv("test_oauth_authority") : "https://login.microsoftonline.com/common");
 define("OAUTH_AUTHORIZE_ENDPOINT", getenv("test_oauth_authorize_endpoint") ? getenv("test_oauth_authorize_endpoint") : "/oauth2/v2.0/authorize");
 define("OAUTH_TOKEN_ENDPOINT", getenv("test_oauth_token_endpoint") ? getenv("test_oauth_token_endpoint") : "/oauth2/v2.0/token");
+define("SHAREPOINT_SITE_ID", getenv("test_sharepoint_site_id") ? getenv("test_sharepoint_site_id") : "example.com");

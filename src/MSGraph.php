@@ -4,16 +4,31 @@ namespace ProcessMaker\Flysystem\Adapter;
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Config;
 use ProcessMaker\Flysystem\Adapter\MSGraph\AuthException;
+use ProcessMaker\Flysystem\Adapter\MSGraph\ModeException;
+use ProcessMaker\Flysystem\Adapter\MSGraph\SiteInvalidException;
 use League\OAuth2\Client\Provider\GenericProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use Microsoft\Graph\Graph;
+use Microsoft\Graph\Model;
 
 class MSGraph extends AbstractAdapter 
 {
-    // Our Microsoft Graph Client
-    private $client;
+    const MODE_SHAREPOINT = 'sharepoint';
+    const MODE_ONEDRIVE = 'onedrive';
 
-    public function __construct($appId, $appPassword, $tokenEndpoint)
+
+    // Our Microsoft Graph Client
+    private $graph;
+    // Our Microsoft Graph Access Token
+    private $token;
+
+    public function __construct($appId, $appPassword, $tokenEndpoint, $mode = self::MODE_ONEDRIVE, $targetId)
     {
+        if($mode != self::MODE_ONEDRIVE && $mode != self::MODE_SHAREPOINT) {
+            throw new ModeException("Unknown mode specified: " . $mode);
+        }
+
+
         // Initialize the OAuth client
         $oauthClient = new \League\OAuth2\Client\Provider\GenericProvider([
             'clientId' => $appId,
@@ -24,13 +39,31 @@ class MSGraph extends AbstractAdapter
         ]);
 
         try {
-            $accessToken = $oauthClient->getAccessToken('client_credentials', [
+            $this->token = $oauthClient->getAccessToken('client_credentials', [
                 'scope' => 'https://graph.microsoft.com/.default'
             ]);
-            var_dump($accessToken);
         } catch(IdentityProviderException $e) {
             throw new AuthException($e->getMessage());
         }
+
+        // Assign graph instance
+        $this->graph = new Graph();
+        $this->graph->setAccessToken($this->token->getToken());
+
+        // Check for existence
+        if($mode == self::MODE_SHAREPOINT) {
+            try {
+            $drive = $this->graph->createRequest('GET', '/sites/' . $targetId . '/drive')
+                ->setReturnType(Model\Drive::class)
+                ->execute();
+            } catch(\Exception $e) {
+                if($e->getCode() == 400) {
+                    throw new SiteInvalidException("The sharepoint site " . $targetId . " is invalid.");
+                }
+                throw $e;
+            }
+        }
+
     }
 
     public function has($path)
