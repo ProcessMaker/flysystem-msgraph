@@ -9,9 +9,16 @@
             "email": "taylor@processmaker.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/processmaker/msgraph-sdk-php"
+        }
+
+    ],
     "require": {
         "league/oauth2-client": "^2.4",
-        "microsoft/microsoft-graph": "^1.6",
+        "microsoft/microsoft-graph": "dev-bugfix/130",
         "league/flysystem": "^1.0"
     },
     "autoload": {
