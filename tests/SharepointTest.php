@@ -54,17 +54,13 @@ class SharepointTest extends TestBase
 
     public function testRead()
     {
-        // Not completed yet
-        $this->markTestIncomplete('Read not implemented yet.');
-
         // Create file
         $this->fs->write(TEST_FILE_PREFIX . 'testRead.txt', 'testing read functionality');
         $this->filesToPurge[] = TEST_FILE_PREFIX . 'testRead.txt';
 
         // Call read
+        var_dump($this->fs->read(TEST_FILE_PREFIX . 'testRead.txt'));
         $this->assertEquals("testing read functionality", $this->fs->read(TEST_FILE_PREFIX . 'testRead.txt'));
-
-
     }
 
     /**

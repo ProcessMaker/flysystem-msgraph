@@ -2,6 +2,7 @@
 namespace ProcessMaker\Flysystem\Adapter;
 
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Psr7\Stream;
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Config;
 use ProcessMaker\Flysystem\Adapter\MSGraph\AuthException;
@@ -57,9 +58,11 @@ class MSGraph extends AbstractAdapter
         // Check for existence
         if($mode == self::MODE_SHAREPOINT) {
             try {
-            $drive = $this->graph->createRequest('GET', '/sites/' . $targetId . '/drive')
-                ->setReturnType(Model\Drive::class)
+            $site = $this->graph->createRequest('GET', '/sites/' . $targetId)
+                ->setReturnType(Model\Site::class)
                 ->execute();
+            // Assign the site id triplet to our targetId
+            $this->targetId = $site->getId();
             } catch(\Exception $e) {
                 if($e->getCode() == 400) {
                     throw new SiteInvalidException("The sharepoint site " . $targetId . " is invalid.");
@@ -67,7 +70,6 @@ class MSGraph extends AbstractAdapter
                 throw $e;
             }
         }
-        $this->targetId = $targetId;
 
     }
 
@@ -89,14 +91,39 @@ class MSGraph extends AbstractAdapter
             } catch(Exception $e) {
                 throw $e;
             }
-
-
         }
         return false;
     }
 
     public function read($path)
     {
+        if($this->mode == self::MODE_SHAREPOINT) {
+            try {
+                $driveItem = $this->graph->createRequest('GET', '/sites/' . $this->targetId . '/drive/items/root:/' . $path)
+                    ->setReturnType(Model\DriveItem::class)
+                    ->execute();
+                // Successfully retrieved meta data.
+                // Now get content
+                $contentStream = $this->graph->createRequest('GET', '/sites/' . $this->targetId . '/drive/items/' . $driveItem->getId() .'/content')
+                    ->setReturnType(Stream::class)
+                    ->execute();
+                $contents = '';
+                $bufferSize = 8012;
+                // Copy over the data into a string
+                while (!$contentStream->eof()) {
+                    $contents .= $contentStream->read($bufferSize);
+                }
+                return ['contents' => $contents];
+            } catch(ClientException $e) {
+                if($e->getCode() == 404) {
+                    // Not found, let's return false;
+                    return false;
+                }
+                throw $e;
+            } catch(Exception $e) {
+                throw $e;
+            }
+        }
         return false;
     }
     
