@@ -24,4 +24,4 @@ through environment variables and then run the phpunit test suites.  The environ
 * OAUTH_AUTHORITY (optional) : The OAuth2 Authority URL to use. Defaults to https://login.microsoftonline.com/common
 * OAUTH_AUTHORIZE_ENDPOINT (optional) : The OAuth2 Authorize Endpoint to use. Defaults to /oauth2/v2.0/authorize
 * OAUTH_TOKEN_ENDPOINT (optional) : The OAuth2 Token Endpoint to use. Defaults to /oauth2/v2.0/token
-*
+* TEST_FILE_PREFIX (optional) : The prefix to add to all file paths for this test suite. Default to no prefix
