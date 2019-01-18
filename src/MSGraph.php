@@ -126,6 +126,30 @@ class MSGraph extends AbstractAdapter
         }
         return false;
     }
+
+    public function getUrl($path)
+    {
+        if($this->mode == self::MODE_SHAREPOINT) {
+            try {
+                $driveItem = $this->graph->createRequest('GET', '/sites/' . $this->targetId . '/drive/items/root:/' . $path)
+                    ->setReturnType(Model\DriveItem::class)
+                    ->execute();
+                // Successfully retrieved meta data.
+                // Return url property
+                return $driveItem->getWebUrl();
+                return true;
+            } catch(ClientException $e) {
+                if($e->getCode() == 404) {
+                    // Not found, let's return false;
+                    return false;
+                }
+                throw $e;
+            } catch(Exception $e) {
+                throw $e;
+            }
+        }
+        return false;
+    }
     
     public function readStream($path)
     {

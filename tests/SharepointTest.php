@@ -59,8 +59,17 @@ class SharepointTest extends TestBase
         $this->filesToPurge[] = TEST_FILE_PREFIX . 'testRead.txt';
 
         // Call read
-        var_dump($this->fs->read(TEST_FILE_PREFIX . 'testRead.txt'));
         $this->assertEquals("testing read functionality", $this->fs->read(TEST_FILE_PREFIX . 'testRead.txt'));
+    }
+
+    public function testGetUrl()
+    {
+        // Create file
+        $this->fs->write(TEST_FILE_PREFIX . 'testGetUrl.txt', 'testing getUrl functionality');
+        $this->filesToPurge[] = TEST_FILE_PREFIX . 'testGetUrl.txt';
+
+        // Get url
+        $this->assertNotEmpty($this->fs->getAdapter()->getUrl(TEST_FILE_PREFIX . 'testGetUrl.txt'));
     }
 
     /**
