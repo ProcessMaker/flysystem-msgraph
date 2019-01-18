@@ -10,6 +10,7 @@ When setting up permissions, you must add Application Permissions to specify Fil
 Once your app is completed, you'll need your Administrator to consent to the application using the Azure Portal at https://portal.azure.com/.
 
 ## Using with OneDrive
+* Currently OneDrive is not supported. Development is continuing to support OneDrive.
 
 ## Using with Sharepoint Document Libraries
 Adapter Constructor Definition:

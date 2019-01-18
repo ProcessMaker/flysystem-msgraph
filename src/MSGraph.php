@@ -137,7 +137,6 @@ class MSGraph extends AbstractAdapter
                 // Successfully retrieved meta data.
                 // Return url property
                 return $driveItem->getWebUrl();
-                return true;
             } catch(ClientException $e) {
                 if($e->getCode() == 404) {
                     // Not found, let's return false;
