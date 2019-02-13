@@ -22,7 +22,8 @@ public function __construct($appId, $appPassword, $tokenEndpoint, $mode = self::
 * $tokenEndpoint : The OAuth2 Access Token Endpoint for your Azure/Office365 Tenant. (Ex: https://login.microsoftonline.com/example.onmicrosoft.com/oauth2/v2.0/token)
 * $mode : Either 'sharepoint' or 'onedrive' which will specify the target mode. (Note, only Sharepoint is supported currently)
 * $targetId : The target ID for specifying where the files should reside.
-  * For Sharepoint, the sharepoint url (Ex: example.sharepoint.com) can be used in order to utilize the default Document Library.
+  * For Sharepoint, the sharepoint url (Ex: example.sharepoint.com) can be used as well as a URL to the site (Ex: example.sharepoint.com:/sites/EXAMPLE) 
+* $driveName : The name of the document library or drive for the specified sharepoint site.
 
 ## Running Tests
 The tests are functional in which a valid Microsoft Office 365/Azure environment must be available. Once you have your 
