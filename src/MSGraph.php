@@ -26,8 +26,12 @@ class MSGraph extends AbstractAdapter
     private $token;
     // Our targetId, sharepoint site if sharepoint, drive id if onedrive
     private $targetId;
+    // Our driveId, which if non empty points to a Drive
+    private $driveId;
+    // Our url prefix to be used for most file operations. This gets created in our constructor
+    private $prefix;
 
-    public function __construct($appId, $appPassword, $tokenEndpoint, $mode = self::MODE_ONEDRIVE, $targetId)
+    public function __construct($appId, $appPassword, $tokenEndpoint, $mode = self::MODE_ONEDRIVE, $targetId, $driveName = null)
     {
         if($mode != self::MODE_ONEDRIVE && $mode != self::MODE_SHAREPOINT) {
             throw new ModeException("Unknown mode specified: " . $mode);
@@ -69,6 +73,24 @@ class MSGraph extends AbstractAdapter
                 }
                 throw $e;
             }
+            $this->prefix = "/sites/" . $this->targetId . '/drive/items/';
+            if($driveName != '') {
+                // Then we specified a drive name, so let's enumerate the drives and find it
+                $drives = $this->graph->createRequest('GET', '/sites/' . $this->targetId . '/drives')
+                    ->execute();
+                $drives = $drives->getBody()['value'];
+                foreach($drives as $drive) {
+                    if($drive['name'] == $driveName) {
+                        $this->driveId = $drive['id'];
+                        $this->prefix = "/drives/" . $this->driveId . "/items/";
+                        break;
+                    }
+                }
+                if(!$this->driveId) {
+                    throw new SiteInvalidException("The sharepoint drive with name " . $driveName  . " could not be found.");
+                }
+
+            }
         }
 
     }
@@ -77,7 +99,7 @@ class MSGraph extends AbstractAdapter
     {
         if($this->mode == self::MODE_SHAREPOINT) {
             try {
-                $driveItem = $this->graph->createRequest('GET', '/sites/' . $this->targetId . '/drive/items/root:/' . $path)
+                $driveItem = $this->graph->createRequest('GET', $this->prefix . 'root:/' . $path)
                     ->setReturnType(Model\DriveItem::class)
                     ->execute();
                 // Successfully retrieved meta data.
@@ -99,12 +121,12 @@ class MSGraph extends AbstractAdapter
     {
         if($this->mode == self::MODE_SHAREPOINT) {
             try {
-                $driveItem = $this->graph->createRequest('GET', '/sites/' . $this->targetId . '/drive/items/root:/' . $path)
+                $driveItem = $this->graph->createRequest('GET', $this->prefix . 'root:/' . $path)
                     ->setReturnType(Model\DriveItem::class)
                     ->execute();
                 // Successfully retrieved meta data.
                 // Now get content
-                $contentStream = $this->graph->createRequest('GET', '/sites/' . $this->targetId . '/drive/items/' . $driveItem->getId() .'/content')
+                $contentStream = $this->graph->createRequest('GET', $this->prefix . $driveItem->getId() .'/content')
                     ->setReturnType(Stream::class)
                     ->execute();
                 $contents = '';
@@ -131,7 +153,7 @@ class MSGraph extends AbstractAdapter
     {
         if($this->mode == self::MODE_SHAREPOINT) {
             try {
-                $driveItem = $this->graph->createRequest('GET', '/sites/' . $this->targetId . '/drive/items/root:/' . $path)
+                $driveItem = $this->graph->createRequest('GET', '/sites/' . $this->prefix . 'root:/' . $path)
                     ->setReturnType(Model\DriveItem::class)
                     ->execute();
                 // Successfully retrieved meta data.
@@ -191,7 +213,7 @@ class MSGraph extends AbstractAdapter
         if($this->mode == self::MODE_SHAREPOINT) {
             // Attempt to write to sharepoint
             try {
-                $driveItem = $this->graph->createRequest('PUT', '/sites/' . $this->targetId . '/drive/items/root:/' . $path . ':/content')
+                $driveItem = $this->graph->createRequest('PUT', $this->prefix . 'root:/' . $path . ':/content')
                     ->attachBody($contents)
                     ->setReturnType(Model\DriveItem::class)
                     ->execute();
@@ -232,12 +254,12 @@ class MSGraph extends AbstractAdapter
     {
         if($this->mode == self::MODE_SHAREPOINT) {
             try {
-                $driveItem = $this->graph->createRequest('GET', '/sites/' . $this->targetId . '/drive/items/root:/' . $path)
+                $driveItem = $this->graph->createRequest('GET', $this->prefix . 'root:/' . $path)
                     ->setReturnType(Model\DriveItem::class)
                     ->execute();
                 // Successfully retrieved meta data.
                 // Now delete the file
-                $this->graph->createRequest('DELETE', '/sites/' . $this->targetId . '/drive/items/' . $driveItem->getId())
+                $this->graph->createRequest('DELETE', $this->prefix . $driveItem->getId())
                     ->execute();
                 return true;
             } catch(ClientException $e) {
