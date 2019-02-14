@@ -153,7 +153,7 @@ class MSGraph extends AbstractAdapter
     {
         if($this->mode == self::MODE_SHAREPOINT) {
             try {
-                $driveItem = $this->graph->createRequest('GET', '/sites/' . $this->prefix . 'root:/' . $path)
+                $driveItem = $this->graph->createRequest('GET', $this->prefix . 'root:/' . $path)
                     ->setReturnType(Model\DriveItem::class)
                     ->execute();
                 // Successfully retrieved meta data.
