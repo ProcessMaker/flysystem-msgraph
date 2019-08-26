@@ -179,7 +179,31 @@ class MSGraph extends AbstractAdapter
 
     public function listContents($directory = '', $recursive = false)
     {
-
+        if ($this->mode == self::MODE_SHAREPOINT) {
+            try {
+                $drive = $this->graph->createRequest('GET', $this->prefix . 'root:/' . $directory)
+                    ->setReturnType(Model\Drive::class)
+                    ->execute();
+                // Successfully retrieved meta data.
+                // Now get content
+                $driveItems = $this->graph->createRequest('GET', $this->prefix . $drive->getId() .'/children')
+                    ->setReturnType(Model\DriveItem::class)
+                    ->execute();
+                
+                $children = [];
+                foreach ($driveItems as $driveItem) {
+                    $item = $driveItem->getProperties();
+                    $item['path'] = $directory . '/' . $driveItem->getName();
+                    $children[] = $item;
+                }
+                return $children;
+            } catch (ClientException $e) {
+                throw $e;
+            } catch (Exception $e) {
+                throw $e;
+            }
+        }
+        return [];
     }
 
     public function getMetadata($path)
