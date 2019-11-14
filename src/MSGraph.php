@@ -18,9 +18,6 @@ class MSGraph extends AbstractAdapter
     const MODE_SHAREPOINT = 'sharepoint';
     const MODE_ONEDRIVE = 'onedrive';
 
-    const OAUTH_MODE_APP = 'oauth_app';
-    const OAUTH_MODE_USER = 'oauth_user';
-
     // Our mode, if sharepoint or onedrive
     private $mode;
     // Our Microsoft Graph Client
@@ -34,42 +31,9 @@ class MSGraph extends AbstractAdapter
     // Our url prefix to be used for most file operations. This gets created in our constructor
     private $prefix;
 
-    public function __construct($appId, $appPassword, $tokenMode, $mode = self::MODE_ONEDRIVE, $targetId, $driveName = null, $appModeToken = null)
+    public function initialize($graph, $mode = self::MODE_ONEDRIVE, $targetId, $driveName)
     {
-        if($mode != self::MODE_ONEDRIVE && $mode != self::MODE_SHAREPOINT) {
-            throw new ModeException("Unknown mode specified: " . $mode);
-        }
-        if($tokenMode != self::OAUTH_MODE_USER && $tokenMode != self::OAUTH_MODE_APP) {
-            throw new ModeException("Unknown token mode specified: " . $tokenMode);
-        }
-        $this->mode = $mode;
-
-        if ($tokenMode === self::OAUTH_MODE_USER) {
-            // Initialize the OAuth client
-            $oauthClient = new \League\OAuth2\Client\Provider\GenericProvider([
-                'clientId' => $appId,
-                'clientSecret' => $appPassword,
-                'urlAuthorize' => '',
-                'urlResourceOwnerDetails' => '',
-                'urlAccessToken' => $tokenEndpoint,
-            ]);
-
-            try {
-                $this->token = $oauthClient->getAccessToken('client_credentials', [
-                    'scope' => 'https://graph.microsoft.com/.default'
-                ]);
-            } catch(IdentityProviderException $e) {
-                throw new AuthException($e->getMessage());
-            }
-
-            $this->token = $this->token->getToken();
-        } else if ($tokenMode === self::OAUTH_MODE_APP) {
-            $this->token = $appModeToken;
-        }
-
-        // Assign graph instance
-        $this->graph = new Graph();
-        $this->graph->setAccessToken($this->token);
+        $this->graph = $graph;
 
         // Check for existence
         if($mode == self::MODE_SHAREPOINT) {
