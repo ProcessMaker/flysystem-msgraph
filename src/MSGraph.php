@@ -13,10 +13,13 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model;
 
-class MSGraph extends AbstractAdapter 
+class MSGraph extends AbstractAdapter
 {
     const MODE_SHAREPOINT = 'sharepoint';
     const MODE_ONEDRIVE = 'onedrive';
+
+    const OAUTH_MODE_APP = 'oauth_app';
+    const OAUTH_MODE_USER = 'oauth_user';
 
     // Our mode, if sharepoint or onedrive
     private $mode;
@@ -31,28 +34,35 @@ class MSGraph extends AbstractAdapter
     // Our url prefix to be used for most file operations. This gets created in our constructor
     private $prefix;
 
-    public function __construct($appId, $appPassword, $tokenEndpoint, $mode = self::MODE_ONEDRIVE, $targetId, $driveName = null)
+    public function __construct($appId, $appPassword, $tokenMode, $mode = self::MODE_ONEDRIVE, $targetId, $driveName = null, $appModeToken = null)
     {
         if($mode != self::MODE_ONEDRIVE && $mode != self::MODE_SHAREPOINT) {
             throw new ModeException("Unknown mode specified: " . $mode);
         }
+        if($tokenMode != self::OAUTH_MODE_USER && $tokenMode != self::OAUTH_MODE_APP) {
+            throw new ModeException("Unknown token mode specified: " . $tokenMode);
+        }
         $this->mode = $mode;
 
-        // Initialize the OAuth client
-        $oauthClient = new \League\OAuth2\Client\Provider\GenericProvider([
-            'clientId' => $appId,
-            'clientSecret' => $appPassword,
-            'urlAuthorize' => '',
-            'urlResourceOwnerDetails' => '',
-            'urlAccessToken' => $tokenEndpoint,
-        ]);
-
-        try {
-            $this->token = $oauthClient->getAccessToken('client_credentials', [
-                'scope' => 'https://graph.microsoft.com/.default'
+        if ($tokenMode === self::OAUTH_MODE_USER) {
+            // Initialize the OAuth client
+            $oauthClient = new \League\OAuth2\Client\Provider\GenericProvider([
+                'clientId' => $appId,
+                'clientSecret' => $appPassword,
+                'urlAuthorize' => '',
+                'urlResourceOwnerDetails' => '',
+                'urlAccessToken' => $tokenEndpoint,
             ]);
-        } catch(IdentityProviderException $e) {
-            throw new AuthException($e->getMessage());
+
+            try {
+                $this->token = $oauthClient->getAccessToken('client_credentials', [
+                    'scope' => 'https://graph.microsoft.com/.default'
+                ]);
+            } catch(IdentityProviderException $e) {
+                throw new AuthException($e->getMessage());
+            }
+        } else if ($tokenMode === self::OAUTH_MODE_APP) {
+            $this->token = $appModeToken;
         }
 
         // Assign graph instance
@@ -171,7 +181,7 @@ class MSGraph extends AbstractAdapter
         }
         return false;
     }
-    
+
     public function readStream($path)
     {
 
@@ -189,7 +199,7 @@ class MSGraph extends AbstractAdapter
                 $driveItems = $this->graph->createRequest('GET', $this->prefix . $drive->getId() .'/children')
                     ->setReturnType(Model\DriveItem::class)
                     ->execute();
-                
+
                 $children = [];
                 foreach ($driveItems as $driveItem) {
                     $item = $driveItem->getProperties();
