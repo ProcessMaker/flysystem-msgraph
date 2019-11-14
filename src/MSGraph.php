@@ -9,7 +9,6 @@ use ProcessMaker\Flysystem\Adapter\MSGraph\AuthException;
 use ProcessMaker\Flysystem\Adapter\MSGraph\ModeException;
 use ProcessMaker\Flysystem\Adapter\MSGraph\SiteInvalidException;
 use League\OAuth2\Client\Provider\GenericProvider;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model;
 

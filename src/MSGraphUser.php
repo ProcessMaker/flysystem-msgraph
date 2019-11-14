@@ -2,6 +2,9 @@
 
 namespace ProcessMaker\Flysystem\Adapter;
 
+use Microsoft\Graph\Graph;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+
 class MSGraphUser extends MSGraph
 {
 
