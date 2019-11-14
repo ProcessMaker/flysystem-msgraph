@@ -10,9 +10,7 @@ class MSGraphUser extends MSGraph
 
     public function __construct($appId, $appPassword, $tokenEndpoint, $mode = self::MODE_ONEDRIVE, $targetId, $driveName = null)
     {
-        if($mode != self::MODE_ONEDRIVE && $mode != self::MODE_SHAREPOINT) {
-            throw new ModeException("Unknown mode specified: " . $mode);
-        }
+        parent::__construct($mode);
 
         // Initialize the OAuth client
         $oauthClient = new \League\OAuth2\Client\Provider\GenericProvider([

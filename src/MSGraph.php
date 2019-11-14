@@ -30,8 +30,16 @@ class MSGraph extends AbstractAdapter
     // Our url prefix to be used for most file operations. This gets created in our constructor
     private $prefix;
 
+    public function __construct($mode)
+    {
+        if ($mode != self::MODE_ONEDRIVE && $mode != self::MODE_SHAREPOINT) {
+            throw new ModeException("Unknown mode specified: " . $mode);
+        }
+    }
+
     public function initialize($graph, $mode = self::MODE_ONEDRIVE, $targetId, $driveName)
     {
+        $this->mode = $mode;
         $this->graph = $graph;
 
         // Check for existence
@@ -211,16 +219,13 @@ class MSGraph extends AbstractAdapter
     {
         if($this->mode == self::MODE_SHAREPOINT) {
             // Attempt to write to sharepoint
-            try {
-                $driveItem = $this->graph->createRequest('PUT', $this->prefix . 'root:/' . $path . ':/content')
-                    ->attachBody($contents)
-                    ->setReturnType(Model\DriveItem::class)
-                    ->execute();
-                // Successfully created
-                return true;
-            } catch(Exception $e) {
-                throw $e;
-            }
+            $driveItem = $this->graph->createRequest('PUT', $this->prefix . 'root:/' . $path . ':/content')
+                                     ->attachBody($contents)
+                                     ->setReturnType(Model\DriveItem::class)
+                                     ->execute();
+
+            // Successfully created
+            return true;
         }
     }
 
