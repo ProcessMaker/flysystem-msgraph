@@ -61,13 +61,15 @@ class MSGraph extends AbstractAdapter
             } catch(IdentityProviderException $e) {
                 throw new AuthException($e->getMessage());
             }
+
+            $this->token = $this->token->getToken();
         } else if ($tokenMode === self::OAUTH_MODE_APP) {
             $this->token = $appModeToken;
         }
 
         // Assign graph instance
         $this->graph = new Graph();
-        $this->graph->setAccessToken($this->token->getToken());
+        $this->graph->setAccessToken($this->token);
 
         // Check for existence
         if($mode == self::MODE_SHAREPOINT) {
