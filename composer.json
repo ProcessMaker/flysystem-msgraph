@@ -11,7 +11,7 @@
     ],
     "require": {
         "league/oauth2-client": "^2.4",
-        "microsoft/microsoft-graph": "dev-master",
+        "microsoft/microsoft-graph": "dev-main",
         "league/flysystem": "^1.0"
     },
     "autoload": {
