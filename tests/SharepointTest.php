@@ -1,12 +1,12 @@
 <?php
-namespace ProcessMaker\Flysystem\Adapter\MSGraph\Test;
+namespace Kimmelsg\Flysystem\Adapter\MSGraph\Test;
 
 use League\Flysystem\Filesystem;
-use ProcessMaker\Flysystem\Adapter\MSGraph\AuthException;
-use ProcessMaker\Flysystem\Adapter\MSGraph\SiteInvalidException;
-use ProcessMaker\Flysystem\Adapter\MSGraph\ModeException;
+use Kimmelsg\Flysystem\Adapter\MSGraph\AuthException;
+use Kimmelsg\Flysystem\Adapter\MSGraph\SiteInvalidException;
+use Kimmelsg\Flysystem\Adapter\MSGraph\ModeException;
 
-use ProcessMaker\Flysystem\Adapter\MSGraph as Adapter;
+use Kimmelsg\Flysystem\Adapter\MSGraph as Adapter;
 
 class SharepointTest extends TestBase
 {

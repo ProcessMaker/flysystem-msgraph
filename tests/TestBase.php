@@ -1,7 +1,7 @@
 <?php
-namespace ProcessMaker\Flysystem\Adapter\MSGraph\Test;
+namespace Kimmelsg\Flysystem\Adapter\MSGraph\Test;
 
-use ProcessMaker\Flysystem\Adapter\MSGraph;
+use Kimmelsg\Flysystem\Adapter\MSGraph;
 use PHPUnit\Framework\TestCase;
 
 // Include our configuration

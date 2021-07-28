@@ -1,5 +1,5 @@
 <?php
-namespace ProcessMaker\Flysystem\Adapter\MSGraph;
+namespace Kimmelsg\Flysystem\Adapter\MSGraph;
 
 use Exception;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace ProcessMaker\Flysystem\Adapter;
+namespace Kimmelsg\Flysystem\Adapter;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Stream;
@@ -8,8 +8,8 @@ use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Config;
 use Microsoft\Graph\Graph;
 use Microsoft\Graph\Model;
-use ProcessMaker\Flysystem\Adapter\MSGraph\ModeException;
-use ProcessMaker\Flysystem\Adapter\MSGraph\SiteInvalidException;
+use Kimmelsg\Flysystem\Adapter\MSGraph\ModeException;
+use Kimmelsg\Flysystem\Adapter\MSGraph\SiteInvalidException;
 
 class MSGraph extends AbstractAdapter
 {

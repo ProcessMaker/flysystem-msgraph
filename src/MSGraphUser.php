@@ -1,11 +1,11 @@
 <?php
 
-namespace ProcessMaker\Flysystem\Adapter;
+namespace Kimmelsg\Flysystem\Adapter;
 
 use Microsoft\Graph\Graph;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 
-class MSGraphUser extends MSGraph
+class MSGraphUser extends MSGraph 
 {
 
     public function __construct($appId, $appPassword, $tokenEndpoint, $mode = self::MODE_ONEDRIVE, $targetId, $driveName = null)

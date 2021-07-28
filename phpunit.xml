@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true" bootstrap="./vendor/autoload.php">
 	<testsuites>
-		<testsuite name="ProcessMaker Flysystem Adapter for Microsoft Graph Test Suite">
+		<testsuite name="Kimmelsg Flysystem Adapter for Microsoft Graph Test Suite">
 			<directory>tests</directory>
 		</testsuite>
 	</testsuites>

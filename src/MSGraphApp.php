@@ -1,6 +1,6 @@
 <?php
 
-namespace ProcessMaker\Flysystem\Adapter;
+namespace Kimmelsg\Flysystem\Adapter;
 
 use Microsoft\Graph\Graph;
 
