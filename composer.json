@@ -1,26 +1,26 @@
 {
-    "name": "processmaker/flysystem-msgraph",
-    "description": "A Flysystem Adapter that supports Microsoft OneDrive and Sharepoint Document Libraries using Microsoft Graph",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Taylor Dondich",
-            "email": "taylor@processmaker.com"
-        }
-    ],
-    "require": {
-        "league/oauth2-client": "^2.4",
-        "microsoft/microsoft-graph": "dev-master",
-        "league/flysystem": "^1.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "ProcessMaker\\Flysystem\\Adapter\\": "src/",
-            "ProcessMaker\\Flysystem\\Adapter\\MSGraph\\Test\\": "tests/"
-        }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^7.5"
+  "name": "kimmelsg/flysystem-msgraph",
+  "description": "A Flysystem Adapter that supports Microsoft OneDrive and Sharepoint Document Libraries using Microsoft Graph -- a fork.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Taylor Dondich",
+      "email": "taylor@processmaker.com"
     }
+  ],
+  "require": {
+    "league/oauth2-client": "^2.4",
+    "microsoft/microsoft-graph": "dev-main",
+    "league/flysystem": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Kimmelsg\\Flysystem\\Adapter\\": "src/",
+      "Kimmelsg\\Flysystem\\Adapter\\MSGraph\\Test\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7.5"
+  }
 }
